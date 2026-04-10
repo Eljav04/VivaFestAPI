@@ -3,9 +3,9 @@ using VivaFestAPI.Entities;
 
 namespace VivaFestAPI.Data;
 
-public class QuizDbContext : DbContext
+public class AppDbContext : DbContext
 {
-    public QuizDbContext(DbContextOptions<QuizDbContext> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 

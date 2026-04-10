@@ -1,5 +1,5 @@
 
-namespace VITRACK.Api.Extensions;
+namespace VivaFestAPI.Extensions;
 
 public static class CorsPolicyExtension
 {

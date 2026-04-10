@@ -8,9 +8,9 @@ namespace VivaFestAPI.Services;
 
 public class QuizService : IQuizService
 {
-    private readonly QuizDbContext _context;
+    private readonly AppDbContext _context;
 
-    public QuizService(QuizDbContext context)
+    public QuizService(AppDbContext context)
     {
         _context = context;
         _context.Database.EnsureCreated(); // Ensure DB is created locally

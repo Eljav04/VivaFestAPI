@@ -1,9 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using System;
-using VITRACK.Api.Extensions;
+using VivaFestAPI.Data;
+using VivaFestAPI.Extensions;
+using VivaFestAPI.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
+builder.Services.AddDbContext<AppDbContext>(options =>
+	options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

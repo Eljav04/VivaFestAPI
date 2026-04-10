@@ -11,7 +11,8 @@ public static class CorsPolicyExtension
         policy =>
         {
             policy
-                  .AllowAnyMethod()
+			      .AllowAnyOrigin()
+				  .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
         });

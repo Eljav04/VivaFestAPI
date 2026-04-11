@@ -197,11 +197,11 @@ public class QuizService : IQuizService
 
     public async Task<bool> IsQuizActiveAsync()
     {
-        if (!File.Exists(ConfigPath)) return true;
-        
-        var json = await File.ReadAllTextAsync(ConfigPath);
-        var config = JsonSerializer.Deserialize<QuizConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        return config?.Active ?? true;
+            if (!File.Exists(ConfigPath)) return true;
+            
+            var json = await File.ReadAllTextAsync(ConfigPath);
+            var config = JsonSerializer.Deserialize<QuizConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return config?.Active ?? true;
     }
 
     public async Task<bool> ToggleQuizActivityAsync()

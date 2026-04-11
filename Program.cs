@@ -3,8 +3,16 @@ using System;
 using VivaFestAPI.Data;
 using VivaFestAPI.Extensions;
 using VivaFestAPI.Utility;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Ensure config.json exists
+var configPath = Path.Combine(builder.Environment.ContentRootPath, "config.json");
+if (!File.Exists(configPath))
+{
+    File.WriteAllText(configPath, "{\n  \"active\": true\n}");
+}
 
 var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
 builder.Services.AddDbContext<AppDbContext>(options =>

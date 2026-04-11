@@ -193,31 +193,39 @@ public class QuizService : IQuizService
             .ToListAsync();
     }
 
-    private string ConfigPath => Path.Combine(_env.ContentRootPath, "config.json");
-
-    public async Task<bool> IsQuizActiveAsync()
+    public async Task<bool> CheckActivityAsync()
     {
-            if (!File.Exists(ConfigPath)) return true;
-            
-            var json = await File.ReadAllTextAsync(ConfigPath);
-            var config = JsonSerializer.Deserialize<QuizConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return config?.Active ?? true;
+        var configPath = Path.Combine(_env.ContentRootPath, "config.json");
+        if (!File.Exists(configPath)) return true;
+
+        var json = await File.ReadAllTextAsync(configPath);
+        using var doc = JsonDocument.Parse(json);
+        if (doc.RootElement.TryGetProperty("active", out var activeElement))
+        {
+            return activeElement.GetBoolean();
+        }
+        return true;
     }
 
-    public async Task<bool> ToggleQuizActivityAsync()
+    public async Task<bool> ToggleActivityAsync()
     {
-        var currentStatus = await IsQuizActiveAsync();
+        var configPath = Path.Combine(_env.ContentRootPath, "config.json");
+        bool currentStatus = false;
+        
+        if (File.Exists(configPath))
+        {
+            var json = await File.ReadAllTextAsync(configPath);
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.TryGetProperty("active", out var activeElement))
+            {
+                currentStatus = activeElement.GetBoolean();
+            }
+        }
+
         var newStatus = !currentStatus;
-        
-        var config = new QuizConfig { Active = newStatus };
-        var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(ConfigPath, json);
-        
+        var newJson = JsonSerializer.Serialize(new { active = newStatus }, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(configPath, newJson);
+
         return newStatus;
     }
-}
-
-public class QuizConfig
-{
-    public bool Active { get; set; }
 }

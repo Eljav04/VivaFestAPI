@@ -54,13 +54,12 @@ public class QuizController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("admin/toggle_activity")]
+    [HttpPost("admin/quiz/toggle_activity")]
     public async Task<IActionResult> ToggleActivity()
     {
-        var newState = await _quizService.ToggleQuizActivityAsync();
-        return Ok(newState);
+        var result = await _quizService.ToggleActivityAsync();
+        return Ok(result);
     }
-
 
     // ================= PARTICIPANT ENDPOINTS =================
 
@@ -91,9 +90,7 @@ public class QuizController : ControllerBase
     [HttpGet("check_activity")]
     public async Task<IActionResult> CheckActivity()
     {
-        var isActive = await _quizService.IsQuizActiveAsync();
-        return Ok(isActive);
+        var result = await _quizService.CheckActivityAsync();
+        return Ok(result);
     }
-
-    
 }

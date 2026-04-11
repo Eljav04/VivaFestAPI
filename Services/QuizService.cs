@@ -13,7 +13,6 @@ public class QuizService : IQuizService
     public QuizService(AppDbContext context)
     {
         _context = context;
-        _context.Database.EnsureCreated(); // Ensure DB is created locally
     }
 
     public async Task<List<QuestionDto>> GetAllQuestionsAsync()

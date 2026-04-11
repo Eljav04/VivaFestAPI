@@ -3,16 +3,20 @@ using VivaFestAPI.Data;
 using VivaFestAPI.DTOs;
 using VivaFestAPI.Entities;
 using VivaFestAPI.Interfaces;
+using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
 
 namespace VivaFestAPI.Services;
 
 public class QuizService : IQuizService
 {
     private readonly AppDbContext _context;
+    private readonly IWebHostEnvironment _env;
 
-    public QuizService(AppDbContext context)
+    public QuizService(AppDbContext context, IWebHostEnvironment env)
     {
         _context = context;
+        _env = env;
     }
 
     public async Task<List<QuestionDto>> GetAllQuestionsAsync()
@@ -188,4 +192,32 @@ public class QuizService : IQuizService
 			.OrderByDescending(r => r.Points)
             .ToListAsync();
     }
+
+    private string ConfigPath => Path.Combine(_env.ContentRootPath, "config.json");
+
+    public async Task<bool> IsQuizActiveAsync()
+    {
+        if (!File.Exists(ConfigPath)) return true;
+        
+        var json = await File.ReadAllTextAsync(ConfigPath);
+        var config = JsonSerializer.Deserialize<QuizConfig>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        return config?.Active ?? true;
+    }
+
+    public async Task<bool> ToggleQuizActivityAsync()
+    {
+        var currentStatus = await IsQuizActiveAsync();
+        var newStatus = !currentStatus;
+        
+        var config = new QuizConfig { Active = newStatus };
+        var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(ConfigPath, json);
+        
+        return newStatus;
+    }
+}
+
+public class QuizConfig
+{
+    public bool Active { get; set; }
 }

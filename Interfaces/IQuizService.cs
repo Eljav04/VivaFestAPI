@@ -16,6 +16,10 @@ public interface IQuizService
     Task<List<ParticipantQuestionDto>> GetParticipantQuestionsAsync();
     Task<QuizResult> SubmitQuizAsync(SubmitQuizDto dto);
 
+    // Activity
+    Task<bool> IsQuizActiveAsync();
+    Task<bool> ToggleQuizActivityAsync();
+
     // Global
     Task<List<QuizResult>> GetLeaderboardAsync();
 }

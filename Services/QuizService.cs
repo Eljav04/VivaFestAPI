@@ -195,37 +195,25 @@ public class QuizService : IQuizService
 
     public async Task<bool> CheckActivityAsync()
     {
-        var configPath = Path.Combine(_env.ContentRootPath, "config.json");
-        if (!File.Exists(configPath)) return true;
+        var config = await _context.AppConfigs.AsNoTracking().FirstOrDefaultAsync(c => c.Name == "ActivityStatus");
+        if (config == null) return true;
 
-        var json = await File.ReadAllTextAsync(configPath);
-        using var doc = JsonDocument.Parse(json);
-        if (doc.RootElement.TryGetProperty("active", out var activeElement))
-        {
-            return activeElement.GetBoolean();
-        }
-        return true;
+        return config.Value;
     }
 
     public async Task<bool> ToggleActivityAsync()
     {
-        var configPath = Path.Combine(_env.ContentRootPath, "config.json");
-        bool currentStatus = false;
+        var config = await _context.AppConfigs.FirstOrDefaultAsync(c => c.Name == "ActivityStatus");
         
-        if (File.Exists(configPath))
+        if (config == null)
         {
-            var json = await File.ReadAllTextAsync(configPath);
-            using var doc = JsonDocument.Parse(json);
-            if (doc.RootElement.TryGetProperty("active", out var activeElement))
-            {
-                currentStatus = activeElement.GetBoolean();
-            }
+            config = new AppConfig { Name = "ActivityStatus", Value = true };
+            _context.AppConfigs.Add(config);
         }
 
-        var newStatus = !currentStatus;
-        var newJson = JsonSerializer.Serialize(new { active = newStatus }, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(configPath, newJson);
+        config.Value = !config.Value;
+        await _context.SaveChangesAsync();
 
-        return newStatus;
+        return config.Value;
     }
 }

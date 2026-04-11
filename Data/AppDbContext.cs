@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Question> Questions { get; set; }
     public DbSet<Answer> Answers { get; set; }
     public DbSet<QuizResult> QuizResults { get; set; }
+    public DbSet<AppConfig> AppConfigs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +39,12 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<AppConfig>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasData(new AppConfig { Id = 1, Name = "ActivityStatus", Value = true });
         });
     }
 }

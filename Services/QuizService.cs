@@ -129,8 +129,15 @@ public class QuizService : IQuizService
     {
         int rightAnswers = 0;
         int wrongAnswers = 0;
+        Dictionary<int,int> answerIdsGrouped = new();
 
-        var answerIdsGrouped = dto.Answers.ToDictionary(a => a.QuestionId, a => a.AnswerId);
+		try
+		{
+            answerIdsGrouped = dto.Answers.ToDictionary(a => a.QuestionId, a => a.AnswerId);
+        }
+        catch
+        {
+        }
 
         var questions = await _context.Questions
             .Include(q => q.Answers)

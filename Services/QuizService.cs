@@ -18,7 +18,8 @@ public class QuizService : IQuizService
     public async Task<List<QuestionDto>> GetAllQuestionsAsync()
     {
         var questions = await _context.Questions
-            .Include(q => q.Answers)
+            .AsNoTracking()
+			.Include(q => q.Answers)
             .ToListAsync();
 
         return questions.Select(q => new QuestionDto
@@ -108,7 +109,8 @@ public class QuizService : IQuizService
     public async Task<List<ParticipantQuestionDto>> GetParticipantQuestionsAsync()
     {
         var questions = await _context.Questions
-            .Include(q => q.Answers)
+			.AsNoTracking()
+			.Include(q => q.Answers)
             .ToListAsync();
 
         return questions.Select(q => new ParticipantQuestionDto
@@ -175,7 +177,8 @@ public class QuizService : IQuizService
     public async Task<List<QuizResult>> GetLeaderboardAsync()
     {
         return await _context.QuizResults
-            .OrderByDescending(r => r.Points)
+			.AsNoTracking()
+			.OrderByDescending(r => r.Points)
             .ToListAsync();
     }
 }
